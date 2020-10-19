@@ -8,7 +8,7 @@ pipeline {
     stage('1. Cloning Git') {
       steps {
         echo 'Cloning...'
-        git credentialsId: 'GitHub-Creds', url: 'https://github.com/EliranN/WorldOfGames'
+        git credentialsId: 'github', url: 'https://github.com/EliranN/WorldOfGames'
         bat 'docker system prune -af'
       }
     }
