@@ -44,7 +44,6 @@ pipeline {
               withCredentials([usernamePassword(credentialsId: 'Docker-hub-creds', passwordVariable: 'PASSWORD',
                usernameVariable: 'USERNAME')]) {
                 bat 'docker login -u ${USERNAME} -p ${PASSWORD}'}
-              # bat 'docker login -u nadjmi -p *****'
               bat 'docker-compose push'
               bat 'docker-compose down --rmi all'
         }
