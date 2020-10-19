@@ -8,6 +8,3 @@ services:
       - 8777:8777
     volumes:
       - .:/app
-networks:
-  default:
-    driver: overlay
