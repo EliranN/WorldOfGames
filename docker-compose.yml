@@ -1,0 +1,13 @@
+version: "3"
+services:
+  webserver:
+    tty: true
+    image: 'nadjmi/flask'
+    container_name: flask_server
+    ports:
+      - 8777:8777
+    volumes:
+      - .:/app
+networks:
+  default:
+    driver: overlay
