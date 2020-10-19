@@ -1,6 +1,6 @@
 pipeline {
       environment {
-        url_ip = "127.0.0.1"
+        url_ip = "172.18.0.2"
         port_id = "8777"
       }
   agent any
@@ -29,7 +29,7 @@ pipeline {
       echo 'Testing...'
             script {
         try {
-            bat "python3 tests\\e2e.py ${env.url_ip} ${env.port_id}"
+            bat "python tests\\e2e.py ${env.url_ip} ${env.port_id}"
         } catch (err) {
                         currentBuild.result='FAILURE'
                     }
