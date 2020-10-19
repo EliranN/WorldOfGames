@@ -3,11 +3,7 @@ pipeline {
         url_ip = "127.0.0.1"
         port_id = "8777"
       }
-  agent {
-        node {
-            label 'windows'
-        }
-    }
+  agent any
   stages {
     stage('1. Cloning Git') {
       steps {
