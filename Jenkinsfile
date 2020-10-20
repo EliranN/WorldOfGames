@@ -6,11 +6,7 @@ pipeline {
       options {
     buildDiscarder(logRotator(numToKeepStr: '2'))
   }
-  agent {
-        node {
-            label 'windows'
-        }
-    }
+  agent any
    stages {
         stage('Checkout') {
             steps {
