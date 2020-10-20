@@ -23,7 +23,7 @@ pipeline {
             steps {
                 bat 'echo 8 > tests/Scores.txt'
                 bat 'icacls * /reset /t /c /q '
-                bat 'docker run --name flask_server -d -it -p 8777:8777 --mount type=bind,source=%WORKSPACE%/Scores.txt,target=/app/Scores.txt EliranN/WorldOfGames'
+                bat 'docker run --name flask_server -d -it -p 8777:8777 --mount type=bind,source=%WORKSPACE%/Scores.txt,target=/app/Scores.txt elirann/worldofgames'
             }
         }
         stage('Test') {
@@ -43,10 +43,10 @@ pipeline {
             withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
                bat 'docker stop flask_server'
                bat 'docker login -u %USER% -p %PASS%'
-               bat 'docker tag EliranN/WorldOfGames EliranN/WorldOfGames:latest'
-               bat 'docker push EliranN/WorldOfGames'
+               bat 'docker tag elirann/worldofgames elirann/worldofgames:latest'
+               bat 'docker push elirann/worldofgames'
                bat 'docker rmi -f python:3'
-               bat 'docker rmi -f EliranN/WorldOfGames:latest'
+               bat 'docker rmi -f elirann/worldofgames:latest'
         }
         }
 	}
