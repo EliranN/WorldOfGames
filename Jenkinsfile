@@ -43,10 +43,10 @@ pipeline {
             withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
                bat 'docker stop flask_server'
                bat 'docker login -u %USER% -p %PASS%'
-               bat 'docker tag elirann/worldofgames elirann/worldofgames:latest'
-               bat 'docker push elirann/worldofgames'
+               bat 'docker tag nadjmi/flask nadjmi/flask:latest'
+               bat 'docker push nadjmi/flask'
                bat 'docker rmi -f python:3'
-               bat 'docker rmi -f elirann/worldofgames:latest'
+               bat 'docker rmi -f nadjmi/flask:latest'
         }
         }
 	}
