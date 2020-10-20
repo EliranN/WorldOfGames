@@ -16,7 +16,7 @@ pipeline {
         }
         stage('Build') {
             steps {
-                bat 'docker build . -f Dockerfile --no-cache --pull --force-rm -t EliranN/worldofgames'
+                bat 'docker build . -f Dockerfile --no-cache --pull --force-rm -t elirann/worldofgames'
             }
         }
         stage('Run') {
