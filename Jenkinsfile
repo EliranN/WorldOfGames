@@ -22,7 +22,7 @@ pipeline {
         stage('Run') {
             steps {
                 bat 'echo 8 > tests/Scores.txt'
-                bat 'icacls * /reset /t /c /q '
+                bat 'icacls * /reset /t /c /q'
                 bat 'docker run --name flask_server -d -it -p 8777:8777 --mount type=bind,source=%WORKSPACE%/Scores.txt,target=/app/Scores.txt elirann/worldofgames'
             }
         }
@@ -45,7 +45,7 @@ pipeline {
                bat 'docker login -u %USER% -p %PASS%'
                bat 'docker tag elirann/worldofgames nadjmi/flask:latest'
                bat 'docker push nadjmi/flask'
-               bat 'docker rmi -f nadjmi/flask:latest'
+               bat 'docker-compose down --rmi all'
         }
         }
 	}
