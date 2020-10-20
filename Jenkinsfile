@@ -45,7 +45,7 @@ pipeline {
                bat 'docker login -u %USER% -p %PASS%'
                bat 'docker tag elirann/worldofgames nadjmi/flask:latest'
                bat 'docker push nadjmi/flask'
-               bat 'docker-compose down --rmi all'
+               bat 'docker rmi -f nadjmi/flask:latest'
         }
         }
 	}
