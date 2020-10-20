@@ -1,51 +1,58 @@
 pipeline {
-      environment {
-        url_ip = "172.18.0.2"
+    environment {
+        url_ip = "127.0.0.1"
         port_id = "8777"
-      }
-  agent any
-  stages {
-    stage('1. Cloning Git') {
-      steps {
-        echo 'Cloning...'
-        git credentialsId: 'github', url: 'https://github.com/EliranN/WorldOfGames'
-        bat 'docker system prune -af'
-      }
     }
-    stage('2. Building Image') {
-      steps{
-      echo 'Building...'
-      bat 'docker-compose pull'
-      bat 'docker-compose build'
-      }
-    }
-    stage('3. Running Container') {
-      steps{
-      echo 'Running...'
-      bat 'docker-compose up -d'
-      }
-    }
-    stage('4. Testing Application') {
-      steps {
-      echo 'Testing...'
-            script {
-        try {
-            bat "python tests\\e2e.py ${env.url_ip} ${env.port_id}"
-        } catch (err) {
-                        currentBuild.result='FAILURE'
-                    }
-        }
-      }
-    }
+      options {
+    buildDiscarder(logRotator(numToKeepStr: '2'))
   }
-  post {
-        always {
-              echo '5. Finalizing...'
-              withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', passwordVariable: 'PASSWORD',
-               usernameVariable: 'USERNAME')]) {
-                bat 'docker login -u %USERNAME% -p %PASSWORD%'}
-              bat 'docker-compose push'
-              bat 'docker-compose down --rmi all'
+  agent {
+        node {
+            label 'windows'
         }
-       }
-       }
+    }
+   stages {
+        stage('Checkout') {
+            steps {
+            deleteDir()
+            checkout scm
+            }
+        }
+        stage('Build') {
+            steps {
+                bat 'docker build . -f Dockerfile --no-cache --pull --force-rm -t EliranN/WorldOfGames'
+            }
+        }
+        stage('Run') {
+            steps {
+                bat 'echo 8 > tests/Scores.txt'
+                bat 'icacls * /reset /t /c /q '
+                bat 'docker run --name flask_server -d -it -p 8777:8777 --mount type=bind,source=%WORKSPACE%/Scores.txt,target=/app/Scores.txt EliranN/WorldOfGames'
+            }
+        }
+        stage('Test') {
+            steps {
+                script {
+            try {
+            bat "python tests\\e2e.py ${env.url_ip} ${env.port_id}"
+            } catch (err) {
+                            currentBuild.result='FAILURE'
+                        }
+
+            }
+        }
+        }
+    stage('cleanup') {
+            steps {
+            withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
+               bat 'docker stop flask_server'
+               bat 'docker login -u %USER% -p %PASS%'
+               bat 'docker tag EliranN/WorldOfGames EliranN/WorldOfGames:latest'
+               bat 'docker push EliranN/WorldOfGames'
+               bat 'docker rmi -f python:3'
+               bat 'docker rmi -f EliranN/WorldOfGames:latest'
+        }
+        }
+	}
+   }
+}
